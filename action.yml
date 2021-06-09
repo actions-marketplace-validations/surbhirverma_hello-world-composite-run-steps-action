@@ -32,7 +32,7 @@ inputs:
     using: "composite"
     steps:
       - name: Check Labels
-      - uses: yashhy/pr-label-check-and-comment-action@master
+        uses: yashhy/pr-label-check-and-comment-action@master
         with:
           required_labels: >-
             breaking, feature, build, chore, ci, docs, fix, perf, refactor,
