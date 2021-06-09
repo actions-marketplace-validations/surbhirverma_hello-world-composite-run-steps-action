@@ -23,11 +23,12 @@
 name: "Verify Code Mergability"
 description: "Verify code mergability by checking labels and testing"
 inputs:
-  fe-github-token:
+  fe-github-token: # id of input
     description: "Pass github token"
     required: true
-  fe-npm-token:
+  fe-npm-token: # id of input
     description: "Pass npm token"
+    required: true
   runs:
     using: "composite"
     steps:
@@ -37,7 +38,6 @@ inputs:
           required_labels: >-
             breaking, feature, build, chore, ci, docs, fix, perf, refactor,
             revert, style, test, upgrade
-          GITHUB_TOKEN: "${{ inputs.fe-github-token }}"
       - name: Check out repo
         uses: actions/checkout@master
       - name: Set up node
@@ -45,8 +45,6 @@ inputs:
         with:
           node-version: "12"
       - name: Install dependencies
-        env:
-          NPM_TOKEN: "${{ inputs.fe-npm-token }}"
         run: npm ci
       - name: Run linters
         uses: wearerequired/lint-action@v1
