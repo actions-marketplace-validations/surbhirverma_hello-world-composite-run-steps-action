@@ -1,21 +1,59 @@
-name: "Hello World Test Composite Actions"
-description: "Greet someone"
+# name: "Hello World Test Composite Actions"
+# description: "Greet someone"
+# inputs:
+#   who-to-greet: # id of input
+#     description: "Who to greet"
+#     required: true
+#     default: "World"
+# outputs:
+#   random-number:
+#     description: "Random number"
+#     value: ${{ steps.random-number-generator.outputs.random-id }}
+# runs:
+#   using: "composite"
+#   steps:
+#     - run: echo Hello ${{ inputs.who-to-greet }}.
+#       shell: bash
+#     - id: random-number-generator
+#       run: echo "::set-output name=random-id::$(echo $RANDOM)"
+#       shell: bash
+#     - run: ${{ github.action_path }}/goodbye.sh
+#       shell: bash
+
+name: "Verify Code Mergability"
+description: "Verify code mergability by checking labels and testing"
 inputs:
-  who-to-greet: # id of input
-    description: "Who to greet"
+  fe-github-token:
+    description: "Pass github token"
     required: true
-    default: "World"
-outputs:
-  random-number:
-    description: "Random number"
-    value: ${{ steps.random-number-generator.outputs.random-id }}
-runs:
-  using: "composite"
-  steps:
-    - run: echo Hello ${{ inputs.who-to-greet }}.
-      shell: bash
-    - id: random-number-generator
-      run: echo "::set-output name=random-id::$(echo $RANDOM)"
-      shell: bash
-    - run: ${{ github.action_path }}/goodbye.sh
-      shell: bash
+  fe-npm-token:
+    description: "Pass npm token"
+  runs:
+    using: "composite"
+    steps:
+      - name: Check Labels
+      - uses: yashhy/pr-label-check-and-comment-action@master
+        with:
+          required_labels: >-
+            breaking, feature, build, chore, ci, docs, fix, perf, refactor,
+            revert, style, test, upgrade
+          GITHUB_TOKEN: "${{ inputs.fe-github-token }}"
+      - name: Check out repo
+        uses: actions/checkout@master
+      - name: Set up node
+        uses: actions/setup-node@v2
+        with:
+          node-version: "12"
+      - name: Install dependencies
+        env:
+          NPM_TOKEN: "${{ inputs.fe-npm-token }}"
+        run: npm ci
+      - name: Run linters
+        uses: wearerequired/lint-action@v1
+        with:
+          continue_on_error: false
+          eslint: true
+          prettier: true
+          stylelint: true
+      - name: Run tests
+        run: npm test
