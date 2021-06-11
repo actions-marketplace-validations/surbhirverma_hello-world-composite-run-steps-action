@@ -9,6 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: dispatch trigger
+        run: echo $github.event.action
         if: github.event.action == "YOUR_EVENT_TYPE"
         run: |
           echo "repository_dispatch triggered"
