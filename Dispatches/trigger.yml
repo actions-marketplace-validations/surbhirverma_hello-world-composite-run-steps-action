@@ -1,10 +1,10 @@
 name: dispatch receiver
-description: "Workflow from outside repo started"
 
-on: push:
+on:
+  push:
     branches: [main]
   repository_dispatch:
-    types: [custom_event]
+    types: custom_event
 
 jobs:
   build:
@@ -12,7 +12,5 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: dispatch trigger
-        run: echo $github.event.action
-        if: github.event.action == "custom_event"
         run: |
           echo "repository_dispatch triggered"
