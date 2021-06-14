@@ -1,0 +1,16 @@
+name: dispatch receiver
+
+on:
+  push:
+    branches: [main]
+  repository_dispatch:
+    types: custom_event
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: dispatch trigger
+        run: |
+          echo "repository_dispatch triggered"
